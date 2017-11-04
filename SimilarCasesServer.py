@@ -2,8 +2,6 @@ import socket
 import cPickle as cp
 import numpy as np
 from gensim.models import KeyedVectors
-import argparse
-import sys
 
 a_value = 'a2'
 p_value = 'p2000'
@@ -15,16 +13,8 @@ nn_model = cp.load(nn_model_file)
 node2vec_model = KeyedVectors.load_word2vec_format('./emd/supShort_supShort.emd')
 
 
-def parse_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--count', default='20')
-    sys.stdout.flush()
-    return parser.parse_args()
-
-
-def getSimilarCases(data):
+def getSimilarCases(data, outputCount):
     data = data.split(" ")
-    outputCount = int(parse_args().count)
     input = []
 
     for val in data:
@@ -61,6 +51,16 @@ print("Server Listening")
 conn, addr = s.accept()
 
 while (True):
-    data = conn.recv(20240)
-    # print(data.decode())
-    conn.send(bytes(getSimilarCases(data) + "\r\n"))
+    # data1 = conn.recv(20240)
+    # print data.replace('\r', '').replace('\n', '')
+    # data2 = conn.recv(1024)
+    # print ([str(data1)], [str(data2)],)
+    # data = data.split("=")
+    try:
+        pVector = (conn.recv(20240)).replace('\r', '').replace('\n', '')
+        numberOfCases = int((conn.recv(1024)).replace('\r', '').replace('\n', ''))
+        # print ([pVector, numberOfCases])
+        # print(data.decode())
+        conn.send(bytes(getSimilarCases(pVector, numberOfCases) + "\r\n"))
+    except:
+        pass

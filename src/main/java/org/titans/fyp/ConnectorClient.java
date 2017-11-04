@@ -5,6 +5,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  * Created by Buddhi on 11/3/2017.
@@ -31,13 +32,15 @@ public class ConnectorClient {
     }
 
 
-    public List<Case> sendData(final String message) {
+    public List<Case> sendData(final String message, int outputCount) {
         List<Case> similarCases = new ArrayList<>();
         sent = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     out.print(message + "\r\n");
+                    out.flush();
+                    out.print(String.valueOf(outputCount) + "\r\n");
                     out.flush();
                     String line = stdIn.readLine();
 //                    System.out.println(line);
@@ -78,8 +81,8 @@ public class ConnectorClient {
     private List<Case> findSimilarCases(String sentences, int outputCount) throws Exception {
         long startTime = System.currentTimeMillis();
 
-        String pVector = pv.setPVector(sentences);
-        List<Case> tem = sendData(pVector);
+        String pVector = pv.setPVector(sentences);// + String.valueOf(outputCount);
+        List<Case> tem = sendData(pVector, outputCount);
 
         long endTime = System.currentTimeMillis();
         long totalTime = endTime - startTime;
@@ -90,27 +93,40 @@ public class ConnectorClient {
 
     public static void main(String args[]) {
 
-        String par = "I am gay. Me and my partner are married for 3 years now. " +
-                "I gave birth to a baby with the help of a sperm donor. " +
-                "However, birth registration officials refuse to issue the birth certificate " +
-                "with the partner’s name as one of the parents, stating that it is legally prohibited to issue.";
+//        String par = "I am gay. Me and my partner are married for 3 years now. " +
+//                "I gave birth to a baby with the help of a sperm donor. " +
+//                "However, birth registration officials refuse to issue the birth certificate " +
+//                "with the partner’s name as one of the parents, stating that it is legally prohibited to issue.";
+
+
+//        String par = "I am a divorced wife of a retired veteran. " +
+//                "He was ordered to pay me a compensation from his total retirement pay at the divorce. " +
+//                "As it was ordered to pay the compensation from his retirement pay, and now he is not receiving it, " +
+//                "he now refuses to pay my portion.  What should I do?";
 
         ConnectorClient cl = new ConnectorClient();
 //        cl.sendData(data);
 
-        try {
-            for (Case cs : cl.findSimilarCases(par, 10)) {
-                System.out.println("ID:" + cs.getId());
-                System.out.println("Court:" + cs.getCourt());
-                System.out.println("Case Name:" + cs.getCaseName());
-                System.out.println("Date:" + cs.getDate());
-                System.out.println("Case ID:" + cs.getCaseID());
-                System.out.println("Argued Date:" + cs.getArguedDate());
-                System.out.println("Decided Date:" + cs.getDecidedDate());
-                System.out.println();
+        while (true) {
+            Scanner sc = new Scanner(System.in);
+            System.out.println("Please enter your text: ");
+            String par = sc.nextLine();
+//            System.out.println(par);
+
+            try {
+                for (Case cs : cl.findSimilarCases(par, 10)) {
+                    System.out.println("ID:" + cs.getId());
+                    System.out.println("Court:" + cs.getCourt());
+                    System.out.println("Case Name:" + cs.getCaseName());
+                    System.out.println("Date:" + cs.getDate());
+                    System.out.println("Case ID:" + cs.getCaseID());
+                    System.out.println("Argued Date:" + cs.getArguedDate());
+                    System.out.println("Decided Date:" + cs.getDecidedDate());
+                    System.out.println();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 }
