@@ -27,10 +27,9 @@ public class CaseFull extends Case {
             setCaseData(line.replaceAll("\\P{Print}", ""));
 
             while ((line = br.readLine()) != null) {
-                if (!line.contains("Footnote")) {
-                    sb.append(line);
-                    sb.append(System.lineSeparator());
-                }
+                sb.append(line);
+                sb.append(System.lineSeparator());
+                sb.append(System.lineSeparator());
             }
             br.close();
             fulltext = sb.toString();
@@ -39,6 +38,10 @@ public class CaseFull extends Case {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void main(String[] args) {
+        System.out.println((new CaseFull("1")).getFulltext());
     }
 
 }
