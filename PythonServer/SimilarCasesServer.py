@@ -6,11 +6,11 @@ from gensim.models import KeyedVectors
 a_value = 'a2'
 p_value = 'p2000'
 
-nn_model_file = open('model_a2_p2000.pickle', 'r')
+nn_model_file = open('./model_a2_p2000.pickle', 'r')
 nn_model = cp.load(nn_model_file)
 
 # Load Node2Vec Trained Model
-node2vec_model = KeyedVectors.load_word2vec_format('./emd/supShort_supShort.emd')
+node2vec_model = KeyedVectors.load_word2vec_format('./supShort_supShort.emd')
 
 
 def getSimilarCases(data, outputCount):
